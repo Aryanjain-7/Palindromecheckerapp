@@ -1,93 +1,75 @@
 import java.util.*;
 
-// Strategy Interface
-interface PalindromeStrategy {
-    boolean checkPalindrome(String input);
-}
-
-// Stack Strategy Implementation
-class StackStrategy implements PalindromeStrategy {
-
-    public boolean checkPalindrome(String input) {
-        Stack<Character> stack = new Stack<>();
-
-        for (char ch : input.toCharArray()) {
-            stack.push(ch);
-        }
-
-        for (char ch : input.toCharArray()) {
-            if (ch != stack.pop()) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
-// Deque Strategy Implementation
-class DequeStrategy implements PalindromeStrategy {
-
-    public boolean checkPalindrome(String input) {
-        Deque<Character> deque = new ArrayDeque<>();
-
-        for (char ch : input.toCharArray()) {
-            deque.addLast(ch);
-        }
-
-        while (deque.size() > 1) {
-            if (deque.removeFirst() != deque.removeLast()) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
-// Context Class
-class PalindromeChecker {
-
-    private PalindromeStrategy strategy;
-
-    public PalindromeChecker(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean check(String input) {
-        return strategy.checkPalindrome(input);
-    }
-}
-
-// Main Application
 public class PalindromeCheckerApp {
+
+    // UC3: String Reverse
+    public static boolean reverseStringCheck(String str) {
+        String reversed = "";
+        for (int i = str.length() - 1; i >= 0; i--) {
+            reversed += str.charAt(i);
+        }
+        return str.equals(reversed);
+    }
+
+    // UC4: Char Array Two-Pointer
+    public static boolean charArrayCheck(String str) {
+        char[] arr = str.toCharArray();
+        int start = 0, end = arr.length - 1;
+        while (start < end) {
+            if (arr[start] != arr[end]) return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
+
+    // UC5: Stack Based
+    public static boolean stackCheck(String str) {
+        Stack<Character> stack = new Stack<>();
+        for (char ch : str.toCharArray()) stack.push(ch);
+        for (char ch : str.toCharArray()) if (ch != stack.pop()) return false;
+        return true;
+    }
+
+    // UC7: Deque Based
+    public static boolean dequeCheck(String str) {
+        Deque<Character> deque = new ArrayDeque<>();
+        for (char ch : str.toCharArray()) deque.addLast(ch);
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) return false;
+        }
+        return true;
+    }
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter a string: ");
+        System.out.print("Enter a string for performance test: ");
         String input = sc.nextLine();
 
-        System.out.println("Choose Strategy:");
-        System.out.println("1. Stack Strategy");
-        System.out.println("2. Deque Strategy");
+        // UC3 timing
+        long start = System.nanoTime();
+        reverseStringCheck(input);
+        long end = System.nanoTime();
+        System.out.println("String Reverse (UC3) Time: " + (end - start) + " ns");
 
-        int choice = sc.nextInt();
+        // UC4 timing
+        start = System.nanoTime();
+        charArrayCheck(input);
+        end = System.nanoTime();
+        System.out.println("Char Array Two-Pointer (UC4) Time: " + (end - start) + " ns");
 
-        PalindromeStrategy strategy;
+        // UC5 timing
+        start = System.nanoTime();
+        stackCheck(input);
+        end = System.nanoTime();
+        System.out.println("Stack Based (UC5) Time: " + (end - start) + " ns");
 
-        if (choice == 1) {
-            strategy = new StackStrategy();
-        } else {
-            strategy = new DequeStrategy();
-        }
-
-        PalindromeChecker checker = new PalindromeChecker(strategy);
-
-        if (checker.check(input)) {
-            System.out.println("The string is a Palindrome.");
-        } else {
-            System.out.println("The string is NOT a Palindrome.");
-        }
+        // UC7 timing
+        start = System.nanoTime();
+        dequeCheck(input);
+        end = System.nanoTime();
+        System.out.println("Deque Based (UC7) Time: " + (end - start) + " ns");
 
         sc.close();
     }
